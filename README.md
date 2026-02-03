@@ -33,24 +33,23 @@ cd plasma-qt-forcerefresh
 ./plasma-integration-patch-manager.sh install
 ```
 
-The script will automatically clone `plasma-integration` source if needed.
+The script automatically clones and patches `plasma-integration`.
+
+### Uninstall
+
+```bash
+./plasma-integration-patch-manager.sh uninstall
+```
 
 ## Usage
 
-After installation, trigger a style refresh on all running Qt applications:
+Trigger a style refresh on all running Qt applications:
 
 ```bash
 dbus-send --session --type=signal /KGlobalSettings org.kde.KGlobalSettings.forceRefresh
 ```
 
 **Note:** Applications must be restarted after installing the patch to pick up the new signal handler.
-
-## Commands
-
-```bash
-./plasma-integration-patch-manager.sh install    # Apply patch, build, and install
-./plasma-integration-patch-manager.sh uninstall  # Revert patch and restore original
-```
 
 ## How It Works
 
@@ -85,4 +84,3 @@ This patch is provided under the same license as plasma-integration (LGPL-2.0-on
 ## Related
 
 - [plasma-integration](https://invent.kde.org/plasma/plasma-integration) - KDE Plasma integration for Qt
-- [KDE Global Settings DBus Interface](https://api.kde.org/frameworks/kconfig/html/classKGlobalSettings.html)
