@@ -23,7 +23,17 @@ This patch adds a new DBus signal `forceRefresh` that unconditionally sends `QEv
 ### Prerequisites
 
 - KDE Plasma 6
-- Build dependencies: `cmake`, `make`, `git`, `extra-cmake-modules`, `qt6-base-dev`, etc.
+- Build dependencies:
+
+**Arch Linux:**
+```bash
+sudo pacman -S cmake make git extra-cmake-modules qt6-base plasma-wayland-protocols
+```
+
+**Debian/Ubuntu:**
+```bash
+sudo apt install cmake make git extra-cmake-modules qt6-base-dev plasma-wayland-protocols
+```
 
 ### Install
 
