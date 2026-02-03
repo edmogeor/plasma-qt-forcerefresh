@@ -1,0 +1,39 @@
+--- a/qt6/src/platformtheme/khintssettings.cpp
++++ b/qt6/src/platformtheme/khintssettings.cpp
+@@ -190,6 +190,8 @@
+ void KHintsSettings::delayedDBusConnects()
+ {
+     QDBusConnection::sessionBus()
++        .connect(QString(), QStringLiteral("/KGlobalSettings"), QStringLiteral("org.kde.KGlobalSettings"), QStringLiteral("forceRefresh"), this, SLOT(forceStyleRefresh()));
++    QDBusConnection::sessionBus()
+         .connect(QString(), QStringLiteral("/KToolBar"), QStringLiteral("org.kde.KToolBar"), QStringLiteral("styleChanged"), this, SLOT(toolbarStyleChanged()));
+     QDBusConnection::sessionBus().connect(QString(),
+                                           QStringLiteral("/KGlobalSettings"),
+@@ -229,6 +231,17 @@
+     }
+ }
+
++void KHintsSettings::forceStyleRefresh()
++{
++    if (!qobject_cast<QApplication *>(QCoreApplication::instance())) {
++        return;
++    }
++    for (QWidget *widget : QApplication::allWidgets()) {
++        QEvent event(QEvent::StyleChange);
++        QApplication::sendEvent(widget, &event);
++    }
++}
++
+ void KHintsSettings::slotNotifyChange(int type, int arg)
+ {
+     mKdeGlobals->reparseConfiguration();
+--- a/qt6/src/platformtheme/khintssettings.h
++++ b/qt6/src/platformtheme/khintssettings.h
+@@ -74,6 +74,7 @@
+     void delayedDBusConnects();
+     void setupIconLoader();
+     void toolbarStyleChanged();
++    void forceStyleRefresh();
+     void slotNotifyChange(int type, int arg);
+     void slotPortalSettingChanged(const QString &group, const QString &key, const QDBusVariant &value);
+
