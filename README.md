@@ -94,7 +94,7 @@ This approach works because `app->setStyle()` creates a new style instance, forc
 
 - Theme switchers that change Kvantum themes without changing the widget style name
 - Dynamic theming tools that modify style properties at runtime
-- Day/night theme switchers (e.g., [plasma-theme-watcher](https://github.com/edmogeor/plasma-theme-watcher))
+- Day/night theme switchers (e.g., [plasma-daynight-sync](https://github.com/edmogeor/plasma-daynight-sync))
 - Development/debugging of Qt styles
 
 ## License
