@@ -23,25 +23,17 @@ This patch adds a new DBus signal `forceRefresh` that unconditionally sends `QEv
 ### Prerequisites
 
 - KDE Plasma 6
-- plasma-integration source code
-- Build dependencies: `cmake`, `make`, `extra-cmake-modules`, `qt6-base-dev`, etc.
+- Build dependencies: `cmake`, `make`, `git`, `extra-cmake-modules`, `qt6-base-dev`, etc.
 
-### Clone plasma-integration
-
-```bash
-git clone https://invent.kde.org/plasma/plasma-integration.git ~/Documents/plasma-integration-master
-```
-
-### Apply and Install
+### Install
 
 ```bash
-# Clone this repo
 git clone https://github.com/edmogeor/plasma-qt-forcerefresh.git
 cd plasma-qt-forcerefresh
-
-# Install the patch (builds and installs plasma-integration)
 ./plasma-integration-patch-manager.sh install
 ```
+
+The script will automatically clone `plasma-integration` source if needed.
 
 ## Usage
 
@@ -59,16 +51,6 @@ dbus-send --session --type=signal /KGlobalSettings org.kde.KGlobalSettings.force
 ./plasma-integration-patch-manager.sh install    # Apply patch, build, and install
 ./plasma-integration-patch-manager.sh uninstall  # Revert patch and restore original
 ```
-
-## Configuration
-
-Set the `PLASMA_INTEGRATION_SRC` environment variable to specify a custom path to the plasma-integration source:
-
-```bash
-PLASMA_INTEGRATION_SRC=/path/to/plasma-integration ./plasma-integration-patch-manager.sh install
-```
-
-Default: `~/Documents/plasma-integration-master`
 
 ## How It Works
 

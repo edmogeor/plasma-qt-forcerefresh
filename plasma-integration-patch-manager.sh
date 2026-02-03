@@ -29,7 +29,7 @@ usage() {
 
 check_deps() {
     local missing=()
-    for cmd in cmake make patch; do
+    for cmd in cmake make patch git; do
         if ! command -v "$cmd" &>/dev/null; then
             missing+=("$cmd")
         fi
@@ -40,12 +40,10 @@ check_deps() {
     fi
 }
 
-check_source() {
+ensure_source() {
     if [[ ! -f "$PLASMA_INT_SRC/qt6/src/platformtheme/khintssettings.cpp" ]]; then
-        echo -e "${RED}plasma-integration source not found at: $PLASMA_INT_SRC${NC}"
-        echo "Please set PLASMA_INTEGRATION_SRC or clone the source:"
-        echo "  git clone https://invent.kde.org/plasma/plasma-integration.git"
-        exit 1
+        echo -e "${GREEN}Cloning plasma-integration source...${NC}"
+        git clone https://invent.kde.org/plasma/plasma-integration.git "$PLASMA_INT_SRC"
     fi
 }
 
@@ -62,8 +60,8 @@ is_patched() {
 
 do_install() {
     check_deps
-    check_source
     check_patch
+    ensure_source
 
     if is_patched; then
         echo -e "${YELLOW}Patch already applied${NC}"
@@ -88,8 +86,12 @@ do_install() {
 
 do_uninstall() {
     check_deps
-    check_source
     check_patch
+
+    if [[ ! -f "$PLASMA_INT_SRC/qt6/src/platformtheme/khintssettings.cpp" ]]; then
+        echo -e "${RED}plasma-integration source not found at: $PLASMA_INT_SRC${NC}"
+        exit 1
+    fi
 
     if ! is_patched; then
         echo -e "${YELLOW}Patch not applied${NC}"
