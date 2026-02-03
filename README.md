@@ -16,7 +16,7 @@ This means if you're only changing colors or other style properties without chan
 
 ## Solution
 
-This patch adds a new DBus signal `forceRefresh` that unconditionally sends `QEvent::StyleChange` to all widgets, bypassing the style name comparison.
+This patch adds a new DBus signal `forceRefresh` that forces Qt to recreate the current style, bypassing the style name comparison. This is particularly useful for styles like Kvantum that cache their theme configuration internally.
 
 ## Installation
 
@@ -66,25 +66,35 @@ dbus-send --session --type=signal /KGlobalSettings org.kde.KGlobalSettings.force
 The patch modifies `qt6/src/platformtheme/khintssettings.cpp` to:
 
 1. Register a new DBus signal handler for `org.kde.KGlobalSettings.forceRefresh`
-2. Add a `forceStyleRefresh()` slot that iterates all widgets and sends `QEvent::StyleChange`:
+2. Add a `forceStyleRefresh()` slot that reparses configuration and recreates the style:
 
 ```cpp
 void KHintsSettings::forceStyleRefresh()
 {
-    if (!qobject_cast<QApplication *>(QCoreApplication::instance())) {
+    QApplication *app = qobject_cast<QApplication *>(QCoreApplication::instance());
+    if (!app) {
         return;
     }
-    for (QWidget *widget : QApplication::allWidgets()) {
-        QEvent event(QEvent::StyleChange);
-        QApplication::sendEvent(widget, &event);
+
+    mKdeGlobals->reparseConfiguration();
+
+    // Force style recreation by setting the same style again
+    if (app->style()) {
+        QString currentStyle = app->style()->name();
+        app->setStyle(currentStyle);
     }
+
+    loadPalettes();
 }
 ```
 
+This approach works because `app->setStyle()` creates a new style instance, forcing styles like Kvantum to reload their theme configuration from disk.
+
 ## Use Cases
 
-- Theme switchers that change color schemes without changing widget styles
-- Dynamic theming tools
+- Theme switchers that change Kvantum themes without changing the widget style name
+- Dynamic theming tools that modify style properties at runtime
+- Day/night theme switchers (e.g., [plasma-theme-watcher](https://github.com/edmogeor/plasma-theme-watcher))
 - Development/debugging of Qt styles
 
 ## License
